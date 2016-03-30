@@ -112,6 +112,7 @@ def spark_submit_service(mem_limit, worker_mem_limit, image, command):
             ["SPARK_MASTER_IP", "spark-master-{execution_name}-{user_name}-{deployment_name}-zoe.{user_name}-{deployment_name}-zoe"],
             ["SPARK_EXECUTOR_RAM", str(executor_ram)]
         ],
+        'networks': [],
         'command': command
     }
     return service
