@@ -19,7 +19,7 @@ from random import randint
 from flask import render_template, request
 from zoe_lib.services import ZoeServiceAPI
 from zoe_lib.executions import ZoeExecutionsAPI
-from zoe_lib.predefined_apps.eurecom_aml_lab import spark_jupyter_notebook_lab_app
+from zoe_lib.predefined_apps.ibm_notebook import spark_jupyter_notebook_ibm_app
 from zoe_lib.query import ZoeQueryAPI
 from zoe_lib.users import ZoeUserAPI
 from zoe_lib.exceptions import ZoeAPIException
@@ -70,10 +70,11 @@ def home_guest():
         template_vars['user_gateway'] = user['gateway_urls'][0]
         template_vars['gateway_ip'] = user['gateway_urls'][0].split('/')[2].split(':')[0]
         exec_api = ZoeExecutionsAPI(get_conf().master_url, guest_identifier, guest_password)
-        app_descr = spark_jupyter_notebook_lab_app()
-        execution = query_api.query('execution', name='aml-lab')
+        app_descr = spark_jupyter_notebook_ibm_app()
+        execution_name = 'ibm-notebook'
+        execution = query_api.query('execution', name=execution_name)
         if len(execution) == 0 or execution[0]['status'] == 'terminated' or execution[0]['status'] == 'finished':
-            exec_api.execution_start('aml-lab', app_descr)
+            exec_api.execution_start(execution_name, app_descr)
             template_vars['execution_status'] = 'submitted'
             return render_template('home_guest.html', **template_vars)
         else:

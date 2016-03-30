@@ -12,7 +12,7 @@
 # implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+from zoe_lib.predefined_apps.ibm_notebook import spark_jupyter_notebook_ibm_app
 from zoe_lib.predefined_apps.copier import copier_app
 from zoe_lib.predefined_apps.spark_interactive import spark_jupyter_notebook_app
 from zoe_lib.predefined_apps.eurecom_aml_lab import spark_jupyter_notebook_lab_app
@@ -32,5 +32,6 @@ PREDEFINED_APPS = [
     openmpi_hello_app,
     spark_submit_app,
     iostack_wordcount_app,
-    sleeper_app
+    sleeper_app,
+    spark_jupyter_notebook_ibm_app
 ]
