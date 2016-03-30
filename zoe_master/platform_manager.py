@@ -20,9 +20,10 @@ from zoe_lib.swarm_client import SwarmClient, DockerContainerOptions
 from zoe_lib.exceptions import ZoeException
 from zoe_master.config import get_conf, singletons
 from zoe_master.scheduler import ZoeScheduler
-from zoe_master.state import execution as execution_module, application as application_module, service as service_module
+from zoe_master.state import execution as execution_module, application as application_module, service as service_module, user as user_module
 from zoe_master.state.manager import StateManager
 from zoe_master.stats import SwarmStats, SchedulerStats
+import zoe_master.workspace.base
 
 log = logging.getLogger(__name__)
 
@@ -36,11 +37,23 @@ class PlatformManager:
     def __init__(self, sched_policy_class):
         self.swarm = SwarmClient(get_conf())
         self.scheduler = ZoeScheduler(self, sched_policy_class)
-        self.state_manager = None
+        self.state_manager = singletons['state_manager']
 
-    def execution_submitted(self, execution: execution_module.Execution):
+    def execution_prepare(self, name: str, user: user_module.User, application_description: application_module.ApplicationDescription):
+        ex = execution_module.Execution(self.state_manager)
+        ex.user = user
+        ex.name = name
+        ex.application = application_description
+        return ex
+
+    def execution_submit(self, execution: execution_module.Execution):
+        execution.id = self.state_manager.gen_id()
+        self.state_manager.new('execution', execution)
+
         execution.set_scheduled()
         self.scheduler.incoming(execution)
+
+        self.state_manager.state_updated()
 
     def execution_start(self, execution: execution_module.Execution) -> bool:
         try:
@@ -94,6 +107,11 @@ class PlatformManager:
 
         for path, mountpoint, readonly in service_description.volumes:
             copts.add_volume_bind(path, mountpoint, readonly)
+
+        for wks in singletons['workspace_managers']:
+            assert isinstance(wks, zoe_master.workspace.base.ZoeWorkspaceBase)
+            if wks.can_be_attached():
+                copts.add_volume_bind(wks.get_path(execution.owner), wks.get_mountpoint(), False)
 
         # The same dictionary is used for templates in the command
         if service_description.command is not None:
@@ -187,6 +205,15 @@ class PlatformManager:
 
     def scheduler_stats(self) -> SchedulerStats:
         return self.scheduler.scheduler_policy.stats()
+
+    def check_workspaces(self):
+        users = self.state_manager.get('user')
+        for user in users:
+            for wks in singletons['workspace_managers']:
+                assert isinstance(wks, zoe_master.workspace.base.ZoeWorkspaceBase)
+                if not wks.exists(user):
+                    log.warning('workspace for user {} not found, creating...'.format(user.name))
+                    wks.create(user)
 
     def check_state_swarm_consistency(self):
         state_changed = False

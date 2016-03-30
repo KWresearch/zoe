@@ -16,7 +16,7 @@
 import zoe_lib.predefined_frameworks.spark as spark_framework
 
 
-def spark_submit_app(name='spark-submit',
+def iostack_wordcount_app(name='iostack-wordcount',
                      master_mem_limit=4 * 1024 * 1024 * 1024,
                      worker_count=3,
                      worker_mem_limit=8 * 1024 * 1024 * 1024,
@@ -24,7 +24,7 @@ def spark_submit_app(name='spark-submit',
                      master_image='192.168.45.252:5000/zoerepo/spark-master',
                      worker_image='192.168.45.252:5000/zoerepo/spark-worker',
                      submit_image='192.168.45.252:5000/zoerepo/spark-submit',
-                     commandline='wordcount.py hdfs://192.168.45.157/datasets/gutenberg_big_2x.txt hdfs://192.168.45.157/tmp/cntwdc1'):
+                     commandline='--class fr.eurecom.dsg.WordCount wc.jar WC-GBig hdfs://hdfs-namenode.hdfs/datasets/gutenberg/gutenberg_small.txt hdfs://hdfs-namenode.hdfs/tmp/cntwdc1'):
     """
     :type name: str
     :type master_mem_limit: int
@@ -43,9 +43,15 @@ def spark_submit_app(name='spark-submit',
         'will_end': False,
         'priority': 512,
         'requires_binary': True,
-        'services': [
-            spark_framework.spark_master_service(master_mem_limit, master_image),
-            spark_framework.spark_submit_service(master_mem_limit, worker_mem_limit, submit_image, commandline)
-        ] + spark_framework.spark_worker_service(worker_count, worker_mem_limit, worker_cores, worker_image)
+        'services': []
     }
+    master = spark_framework.spark_master_service(master_mem_limit, master_image)
+    submit = spark_framework.spark_submit_service(master_mem_limit, worker_mem_limit, submit_image, commandline)
+    workers = spark_framework.spark_worker_service(worker_count, worker_mem_limit, worker_cores, worker_image)
+    master['networks'].append('eeef9754c16790a29d5210c5d9ad8e66614ee8a6229b6dc6f779019d46cec792')
+    submit['networks'].append('eeef9754c16790a29d5210c5d9ad8e66614ee8a6229b6dc6f779019d46cec792')
+    submit['environment'].append(["WS_DIR", "wordcount"])
+    for w in workers:
+        w['networks'].append('eeef9754c16790a29d5210c5d9ad8e66614ee8a6229b6dc6f779019d46cec792')
+    app['services'] = [master, submit] + workers
     return app

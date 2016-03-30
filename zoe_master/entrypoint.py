@@ -30,6 +30,8 @@ from zoe_master.state.blobs.fs import FSBlobs
 from zoe_lib.metrics.influxdb import InfluxDBMetricSender
 from zoe_lib.metrics.base import BaseMetricSender
 from zoe_master.stats_manager import StatsManager
+from zoe_master.workspace.filesystem import ZoeFSWorkspace
+from zoe_master.workspace.hdfs import ZoeHDFSWorkspace
 
 log = logging.getLogger("main")
 
@@ -57,13 +59,22 @@ def main():
     log.info("Initializing state")
     state_manager = StateManager(FSBlobs)
     state_manager.init()
+    config.singletons['state_manager'] = state_manager
 
     log.info("Initializing platform manager")
     pm = PlatformManager(FIFOSchedulerPolicy)
-    pm.state_manager = state_manager
+    config.singletons['platform_manager'] = pm
+
+    log.info("Initializing workspace managers")
+    fswk = ZoeFSWorkspace()
+    config.singletons['workspace_managers'] = [fswk]
+    if config.get_conf().enable_hdfs_workspace:
+        hdfswk = ZoeHDFSWorkspace()
+        config.singletons['workspace_managers'].append(hdfswk)
 
 #    try:
     log.info("Checking state consistency")
+    pm.check_workspaces()
     pm.check_state_swarm_consistency()
 #    except:
 #        log.error('State is seriously corrupted, delete and restart')

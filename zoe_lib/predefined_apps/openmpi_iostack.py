@@ -16,7 +16,7 @@
 import zoe_lib.predefined_frameworks.openmpi as openmpi_framework
 
 
-def openmpi_app(name='openmpi-test', mpirun_commandline='', worker_count=4, worker_memory=(1024 ** 3)):
+def openmpi_hello_app(name='mpihelloworld', mpirun_commandline='mpirun -np 4 --hostfile ./mpi-helloworld/mpihosts ./mpi-helloworld/MPI_Hello', worker_count=4, worker_memory=(1024 ** 3)):
     """
     :type name: str
     :type mpirun_commandline: str
