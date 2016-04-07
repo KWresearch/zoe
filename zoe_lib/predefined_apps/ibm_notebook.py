@@ -23,9 +23,9 @@ def spark_jupyter_notebook_ibm_app(name='ibm-notebook',
                                worker_count=2,
                                worker_mem_limit=12 * (1024 ** 3),
                                worker_cores=6,
-                               master_image='192.168.45.252:5000/zoerepo/spark-master-ibm:1',
-                               worker_image='192.168.45.252:5000/zoerepo/spark-worker-ibm:1',
-                               notebook_image='192.168.45.252:5000/zoerepo/spark-jupyter-notebook-ibm:1'):
+                               master_image='172.17.131.201:5000/iostackrepo/spark-master-ibm',
+                               worker_image='172.17.131.201:5000/iostackrepo/spark-worker-ibm',
+                               notebook_image='172.17.131.201:5000/iostackrepo/spark-jupyter-notebook-ibm'):
     """
     :type name: str
     :type notebook_mem_limit: int
