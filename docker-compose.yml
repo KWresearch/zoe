@@ -13,10 +13,3 @@ services:
     command: python3 zoe-observer.py --debug --master-url http://zoe-master:4850 --swarm http://192.168.45.252:2380
     depends_on:
       - zoe-master
-  zoe-web:
-    image: 192.168.45.252:5000/zoerepo/zoe
-    command: python3 zoe-web.py --debug --master-url http://zoe-master:4850
-    ports:
-      - "8080:5001"
-    depends_on:
-      - zoe-master

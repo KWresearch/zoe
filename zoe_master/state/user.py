@@ -14,9 +14,9 @@
 # limitations under the License.
 
 from passlib.context import CryptContext
+from zoe_master.config import get_conf
 
 from zoe_master.state.base import BaseState
-from zoe_master.config import get_conf
 
 
 class User(BaseState):

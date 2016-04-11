@@ -15,15 +15,16 @@
 
 import logging
 
-from zoe_lib.swarm_client import SwarmClient, DockerContainerOptions
-
-from zoe_lib.exceptions import ZoeException
 from zoe_master.config import get_conf, singletons
+
+import zoe_master.workspace.base
+from zoe_api import application_validation as application_module
+from zoe_lib.exceptions import ZoeException
+from zoe_lib.swarm_client import SwarmClient, DockerContainerOptions
 from zoe_master.scheduler import ZoeScheduler
-from zoe_master.state import execution as execution_module, application as application_module, service as service_module, user as user_module
+from zoe_master.state import execution as execution_module, service as service_module, user as user_module
 from zoe_master.state.manager import StateManager
 from zoe_master.stats import SwarmStats, SchedulerStats
-import zoe_master.workspace.base
 
 log = logging.getLogger(__name__)
 

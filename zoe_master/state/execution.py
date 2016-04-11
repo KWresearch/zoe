@@ -13,15 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import zipfile
 from datetime import datetime
-from io import BytesIO
 
 import dateutil.parser
 
-from zoe_master.state.base import BaseState
-from zoe_master.state.application import ApplicationDescription
+from zoe_api.application_validation import ApplicationDescription
 from zoe_lib.exceptions import ZoeException
+from zoe_master.state.base import BaseState
 
 
 def deserialize_datetime(isoformat):

@@ -13,15 +13,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import logging
 import json
+import logging
+
+from zoe_master.config import get_conf
 
 from zoe_lib.exceptions import ZoeException
-from zoe_master.config import get_conf
-from zoe_master.state.user import User
+from zoe_master.state.blobs import BaseBlobs
 from zoe_master.state.execution import Execution
 from zoe_master.state.service import Service
-from zoe_master.state.blobs import BaseBlobs
+from zoe_master.state.user import User
 
 log = logging.getLogger(__name__)
 

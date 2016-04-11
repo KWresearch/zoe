@@ -13,15 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os.path
 import json
+import os.path
 
-import zoe_master.platform_manager
-import zoe_master.workspace.base
 import zoe_master.config as config
-import zoe_master.state.user
-import zoe_master.state.application
 
+import zoe_api.application_validation
+import zoe_master.platform_manager
+import zoe_master.state.user
+import zoe_master.workspace.base
 
 HDFS_CLIENT_APP = '''
 {
@@ -59,7 +59,7 @@ class ZoeHDFSWorkspace(zoe_master.workspace.base.ZoeWorkspaceBase):
         hdfs_client['services'][0]['environment'].append(["NAMENODE_HOST", "hdfs-namenode.hdfs"])
         hdfs_client['services'][0]['environment'].append(["HDFS_USER", user.name])
         hdfs_client['services'][0]['command'] = './mkdir.sh {}'.format(path)
-        app = zoe_master.state.application.ApplicationDescription()
+        app = zoe_api.application_validation.ApplicationDescription()
         app.from_dict(hdfs_client)
         pm = config.singletons['platform_manager']
         assert isinstance(pm, zoe_master.platform_manager.PlatformManager)
@@ -73,7 +73,7 @@ class ZoeHDFSWorkspace(zoe_master.workspace.base.ZoeWorkspaceBase):
         hdfs_client['services'][0]['environment'].append(["NAMENODE_HOST", "hdfs-namenode.hdfs"])
         hdfs_client['services'][0]['environment'].append(["HDFS_USER", user.name])
         hdfs_client['services'][0]['command'] = 'hdfs dfs -rm -R -skipTrash {}'.format(path)
-        app = zoe_master.state.application.ApplicationDescription()
+        app = zoe_api.application_validation.ApplicationDescription()
         app.from_dict(hdfs_client)
         pm = config.singletons['platform_manager']
         assert isinstance(pm, zoe_master.platform_manager.PlatformManager)

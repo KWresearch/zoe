@@ -17,18 +17,14 @@
 
 import logging
 
-from tornado.wsgi import WSGIContainer
-from tornado.httpserver import HTTPServer
-from tornado.ioloop import IOLoop
+import zoe_master.config as config
 
+from zoe_lib.metrics.base import BaseMetricSender
+from zoe_lib.metrics.influxdb import InfluxDBMetricSender
 from zoe_master.platform_manager import PlatformManager
 from zoe_master.scheduler_policies import FIFOSchedulerPolicy
-import zoe_master.config as config
-from zoe_master.rest_api import init as api_init
-from zoe_master.state.manager import StateManager
 from zoe_master.state.blobs.fs import FSBlobs
-from zoe_lib.metrics.influxdb import InfluxDBMetricSender
-from zoe_lib.metrics.base import BaseMetricSender
+from zoe_master.state.manager import StateManager
 from zoe_master.stats_manager import StatsManager
 from zoe_master.workspace.filesystem import ZoeFSWorkspace
 from zoe_master.workspace.hdfs import ZoeHDFSWorkspace

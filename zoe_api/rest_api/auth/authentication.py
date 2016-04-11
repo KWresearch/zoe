@@ -13,16 +13,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from zoe_api.application_validation import ApplicationDescription, ServiceDescription, ServiceEndpointDescription
+from zoe_api.rest_api.exceptions import ZoeRestAPIException
+import zoe_api.config as config
 
 
-def test_application():
-    ApplicationDescription()
+def authentication_error():
+    raise ZoeRestAPIException('Cannot authenticate your request, provide proper credentials', 401, {'WWW-Authenticate': 'Basic realm="Login Required"'})
 
 
-def test_process():
-    ServiceDescription()
-
-
-def test_process_endpoint():
-    ServiceEndpointDescription()
+def authenticate(request):
+    auth = request.authorization
+    if not auth:
+        authentication_error()
+    token = auth.username
+    if token is None:
+        authentication_error()
+    if token != config.get_conf().auth_token:
+        authentication_error()
+    return

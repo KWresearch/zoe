@@ -16,8 +16,9 @@
 import os.path
 import shutil
 
-import zoe_master.workspace.base
 import zoe_master.config as config
+
+import zoe_master.workspace.base
 
 
 class ZoeFSWorkspace(zoe_master.workspace.base.ZoeWorkspaceBase):

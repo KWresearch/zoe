@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from zoe_master.state.application import ApplicationDescription
+from zoe_api.application_validation import ApplicationDescription
 from zoe_master.state.execution import Execution
 from zoe_master.stats import SchedulerStats
 

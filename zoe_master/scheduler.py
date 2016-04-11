@@ -16,10 +16,10 @@
 import logging
 import queue
 
+from zoe_api.application_validation import ApplicationDescription
 from zoe_lib.exceptions import ZoeException
-from zoe_master.state.application import ApplicationDescription
-from zoe_master.state.execution import Execution
 from zoe_master.scheduler_policies.base import BaseSchedulerPolicy
+from zoe_master.state.execution import Execution
 
 log = logging.getLogger(__name__)
 

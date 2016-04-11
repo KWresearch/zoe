@@ -13,16 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from zoe_api.application_validation import ApplicationDescription, ServiceDescription, ServiceEndpointDescription
+from zoe_api.rest_api.exceptions import ZoeRestAPIException
 
 
-def test_application():
-    ApplicationDescription()
+def authorization_error():
+    raise ZoeRestAPIException('You do not have necessary permissions for the resource', 403)
 
 
-def test_process():
-    ServiceDescription()
-
-
-def test_process_endpoint():
-    ServiceEndpointDescription()
+def is_authorized():
+    # TODO
+    return True
