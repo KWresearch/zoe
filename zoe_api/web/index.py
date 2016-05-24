@@ -13,15 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from zoe_api.rest_api.execution import ExecutionHandler
-from zoe_api.rest_api.service import ServiceHandler
-from zoe_api.rest_api.info import InfoHandler
-from zoe_api.version import ZOE_API_VERSION
+import tornado.gen
 
-API_PATH = '/api/' + ZOE_API_VERSION
+from zoe_api.web.base import BaseHandler
 
-API_ROUTING = [
-    (API_PATH + '/info', InfoHandler),
-    (API_PATH + '/execution', ExecutionHandler),
-    (API_PATH + '/service', ServiceHandler),
-]
+
+class IndexHandler(BaseHandler):
+    @tornado.gen.coroutine
+    def get(self):
+        executions = yield self.db.execute('SELECT * FROM execution')
+        self.render("index.html", executions=executions)

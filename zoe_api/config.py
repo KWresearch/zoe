@@ -23,7 +23,6 @@ config_paths = [
 singletons = {
     'metric': None,
     'stats_manager': None,
-    'state_manager': None,
     'platform_manager': None,
     'workspace_managers': [],
 }
@@ -40,11 +39,14 @@ def load_configuration(test_conf=None):
                                    args_for_setting_config_path=["--config"],
                                    args_for_writing_out_config_file=["--write-config"])
         argparser.add_argument('--debug', action='store_true', help='Enable debug output')
-        argparser.add_argument('--zk', help='ZooKeeper server list (ex.: zk1:2181,zk2:2181)', default='localhost:2181')
         argparser.add_argument('--listen-address', help='REST API listen address', default='0.0.0.0')
         argparser.add_argument('--listen-port', help='REST API listen port', default='4850')
         argparser.add_argument('--deployment-name', help='name of this Zoe deployment', default='prod')
-        argparser.add_argument('--auth-token', help='Token used to authenticate requests to the API', default='changeme')
+        argparser.add_argument('--dbname', help='Database name', default='zoe')
+        argparser.add_argument('--dbuser', help='Database user', default='postgres')
+        argparser.add_argument('--dbpass', help='Database password', default='postgres')
+        argparser.add_argument('--dbhost', help='Database host', default='localhost')
+        argparser.add_argument('--dbport', help='Database port', default=5432)
 
         opts = argparser.parse_args()
         if opts.debug:

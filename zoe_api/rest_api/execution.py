@@ -20,7 +20,6 @@ from zoe_api.rest_api.exceptions import ZoeRestAPIException
 from zoe_api.rest_api.auth.authentication import authenticate
 from zoe_api.rest_api.auth.authorization import is_authorized
 from zoe_api.rest_api.utils import catch_exceptions
-from zoe_api.zk_manager import ZKManager
 from zoe_api.application_validation import validate
 
 

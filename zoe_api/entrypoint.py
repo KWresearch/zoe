@@ -17,15 +17,23 @@
 
 import logging
 
-import zoe_api.config as config
+import psycopg2.extras
 from tornado.httpserver import HTTPServer
+from tornado import web
 from tornado.ioloop import IOLoop
-from tornado.wsgi import WSGIContainer
+import momoko
 
-import zoe_api.rest_api
-import zoe_api.zk_manager
+import zoe_api.config as config
+import zoe_api.db_init
+import zoe_api.web
 
-log = logging.getLogger("api_main")
+log = logging.getLogger("entrypoint")
+
+
+def make_app(conf):
+    app = web.Application(zoe_api.web.WEB_ROUTING,
+                          debug=conf.debug)
+    return app
 
 
 def main():
@@ -41,26 +49,33 @@ def main():
     else:
         logging.basicConfig(level=logging.INFO)
 
-    logging.getLogger('kazoo').setLevel(logging.WARNING)
     logging.getLogger('requests').setLevel(logging.WARNING)
     logging.getLogger('urllib3').setLevel(logging.WARNING)
     logging.getLogger("tornado").setLevel(logging.DEBUG)
 
-    log.info("Connecting to ZooKeeper")
-    state_manager = zoe_api.zk_manager.ZKManager()
-    config.singletons['zk_manager'] = state_manager
+    log.info('Init DB')
+    zoe_api.db_init.init(args)
 
-    log.info("Initializing API")
-    app = zoe_api.rest_api.init(state_manager)
-
-    log.info("Starting HTTP REST server...")
-    app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
-
-    http_server = HTTPServer(WSGIContainer(app))
-    http_server.listen(args.listen_port, args.listen_address)  # Initialized like this it is single-threaded/single-process
+    log.info("Starting HTTP server...")
     ioloop = IOLoop.instance()
+    app = make_app(args)
+
+    dsn = 'dbname=' + args.dbname + \
+          ' user=' + args.dbuser + \
+          ' password=' + args.dbpass + \
+          ' host=' + args.dbhost + \
+          ' port=' + str(args.dbport) + \
+          ' options=-c\ search_path=' + args.deployment_name + ",public"
+    app.db = momoko.Pool(dsn=dsn, cursor_factory=psycopg2.extras.DictCursor, ioloop=ioloop)
+
+    future = app.db.connect()
+    ioloop.add_future(future, lambda f: ioloop.stop())
+    ioloop.start()
+    future.result()  # raises exception on connection error
+
+    http_server = HTTPServer(app)
+    http_server.listen(args.listen_port, args.listen_address)
     try:
         ioloop.start()
     except KeyboardInterrupt:
-        state_manager.stop()
         print("CTRL-C detected, terminating")

@@ -13,15 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from zoe_api.rest_api.execution import ExecutionHandler
-from zoe_api.rest_api.service import ServiceHandler
-from zoe_api.rest_api.info import InfoHandler
-from zoe_api.version import ZOE_API_VERSION
+from tornado import web
 
-API_PATH = '/api/' + ZOE_API_VERSION
 
-API_ROUTING = [
-    (API_PATH + '/info', InfoHandler),
-    (API_PATH + '/execution', ExecutionHandler),
-    (API_PATH + '/service', ServiceHandler),
-]
+class BaseHandler(web.RequestHandler):
+    @property
+    def db(self):
+        return self.application.db

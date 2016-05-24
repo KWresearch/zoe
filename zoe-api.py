@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 # Copyright (c) 2016, Daniele Venzano
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,15 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from zoe_api.rest_api.execution import ExecutionHandler
-from zoe_api.rest_api.service import ServiceHandler
-from zoe_api.rest_api.info import InfoHandler
-from zoe_api.version import ZOE_API_VERSION
+from zoe_api.entrypoint import main
 
-API_PATH = '/api/' + ZOE_API_VERSION
-
-API_ROUTING = [
-    (API_PATH + '/info', InfoHandler),
-    (API_PATH + '/execution', ExecutionHandler),
-    (API_PATH + '/service', ServiceHandler),
-]
+if __name__ == '__main__':
+    main()

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% end %}
+
+{% block content %}
+
+<div id="my_executions">
+    <h3>Executions</h3>
+    <p><a href="/new_execution">New execution</a></p>
+    <table id="exec_list" class="app_list sortable">
+    <thead>
+    <tr>
+        <th>Execution name</th>
+        <th>Status</th>
+        <th>Scheduled</th>
+        <th>Started</th>
+        <th>Finished</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+        {% for e in executions %}
+            <tr>
+                <td><a href="/inspect_executions?id={{ e['id'] }}">{{ e['name'] }}</a></td>
+                <td>{{ e['status'] }}</td>
+                <td><script>format_timestamp("{{ e['time_scheduled'] }}")</script></td>
+                {% if e['time_started'] == None %}
+                <td>not yet</td>
+                {% else %}
+                <td><script>format_timestamp("{{ e['time_started'] }}")</script></td>
+                {% end %}
+                {% if e['time_finished'] == None %}
+                <td>not yet</td>
+                {% else %}
+                <td><script>format_timestamp("{{ e['time_finished'] }}")</script></td>
+                {% end %}
+                {% if e['status'] == "running" or e['status'] == "scheduled" %}
+                    <td><a href="/executions/terminate/{{ e['id'] }}">Terminate</a></td>
+                {% else %}
+                    <td><a href="/executions/restart/{{ e['id'] }}">Restart</a></td>
+                {% end %}
+            </tr>
+        {% end %}
+    </tbody>
+    </table>
+</div>
+
+{% end %}

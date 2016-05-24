@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}New execution definition{% end %}
+{% block content %}
+
+<h1>New execution</h1>
+    <form method="post" action="/start_execution" enctype="multipart/form-data">
+    <label>Execution name: <input type="text" name="exec_name"></label><br>
+    <label>Application description: <input type="file" name="file"></label><br>
+    <input type="submit" value="Start!">
+    </form>
+
+{% end %}
