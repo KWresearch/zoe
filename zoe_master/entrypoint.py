@@ -104,7 +104,7 @@ def main():
     try:
         ioloop.start()
     except KeyboardInterrupt:
-        if config.singletons['metric'] is not None:
+        if config.get_conf().influxdb_enable:
             config.singletons['metric'].quit()
             config.singletons['metric'].join()
         print("CTRL-C detected, terminating")
